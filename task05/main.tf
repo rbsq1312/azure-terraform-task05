@@ -28,9 +28,9 @@ module "app_services" {
   source   = "./modules/app_service"
   for_each = var.web_apps
 
-  name                  = each.value.app_name
-  location              = module.resource_groups[each.value.rg_key].location
-  resource_group_name   = module.resource_groups[each.value.rg_key].name
+  name                = each.value.app_name
+  location            = module.resource_groups[each.value.rg_key].location
+  resource_group_name = module.resource_groups[each.value.rg_key].name
   app_service_plan_id = module.app_service_plans[each.key].id
 
   # Define IP restriction rules as required by the task

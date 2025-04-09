@@ -7,7 +7,7 @@ resource "azurerm_service_plan" "asp" {
 
   # worker_count is only applicable for Elastic Premium, Premium V2/V3, Standard, Basic, Isolated, Isolated V2 plans
   # It is ignored for Free/Shared/Consumption/P0v3. Set it anyway as Terraform might validate.
-  worker_count        = var.worker_count
+  worker_count = var.worker_count
 
-  tags                = var.tags
+  tags = var.tags
 }

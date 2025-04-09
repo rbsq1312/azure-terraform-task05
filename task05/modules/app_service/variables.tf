@@ -39,7 +39,7 @@ variable "ip_restrictions" {
 
 variable "scm_ip_restrictions" {
   description = "A list of IP restriction rules for the SCM site."
-    type = list(object({
+  type = list(object({
     name                      = string
     ip_address                = optional(string)
     priority                  = number

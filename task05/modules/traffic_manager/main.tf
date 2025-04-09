@@ -24,8 +24,8 @@ resource "azurerm_traffic_manager_profile" "tm_profile" {
 resource "azurerm_traffic_manager_azure_endpoint" "tm_endpoints" {
   for_each = var.target_app_service_ids
 
-  name                = each.key # Use the map key as the endpoint name
-  profile_id          = azurerm_traffic_manager_profile.tm_profile.id
-  target_resource_id  = each.value # Use the map value (App Service ID) as the target
-  weight              = 100 # Required even for Performance routing, default to equal weight/priority
+  name               = each.key # Use the map key as the endpoint name
+  profile_id         = azurerm_traffic_manager_profile.tm_profile.id
+  target_resource_id = each.value # Use the map value (App Service ID) as the target
+  weight             = 100        # Required even for Performance routing, default to equal weight/priority
 }

@@ -10,12 +10,12 @@ variable "resource_groups" {
 variable "web_apps" {
   description = "A map of web apps and their associated service plans to create."
   type = map(object({
-    app_name            = string
-    plan_name           = string
-    rg_key              = string # Key referencing the resource_groups map
-    plan_sku            = string
-    plan_worker_count   = number
-    verification_ip     = string
+    app_name          = string
+    plan_name         = string
+    rg_key            = string # Key referencing the resource_groups map
+    plan_sku          = string
+    plan_worker_count = number
+    verification_ip   = string
   }))
   default = {}
 }
@@ -39,7 +39,7 @@ variable "common_tags" {
 }
 
 variable "creator_tag" {
- description = "Tag identifying the creator."
- type        = map(string)
- default     = {}
+  description = "Tag identifying the creator."
+  type        = map(string)
+  default     = {}
 }
