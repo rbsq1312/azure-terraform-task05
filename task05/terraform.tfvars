@@ -1,50 +1,58 @@
-# terraform.tfvars
-
-# Choose 3 unique Azure locations
 resource_groups = {
   rg1 = {
     name     = "cmaz-49b8ddc2-mod5-rg-01"
-    location = "West Europe"
-  }
+    location = "westeurope"
+  },
   rg2 = {
     name     = "cmaz-49b8ddc2-mod5-rg-02"
-    location = "East US"
-  }
+    location = "northeurope"
+  },
   rg3 = {
     name     = "cmaz-49b8ddc2-mod5-rg-03"
-    location = "North Europe"
+    location = "eastus"
   }
 }
 
-web_apps = {
+app_service_plans = {
+  asp1 = {
+    name          = "cmaz-49b8ddc2-mod5-asp-01"
+    sku           = "P0v3"
+    worker_count  = 2
+    resource_group_key = "rg1"
+  },
+  asp2 = {
+    name          = "cmaz-49b8ddc2-mod5-asp-02"
+    sku           = "P1v3"
+    worker_count  = 1
+    resource_group_key = "rg2"
+  }
+}
+
+app_services = {
   app1 = {
-    app_name          = "cmaz-49b8ddc2-mod5-app-01"
-    plan_name         = "cmaz-49b8ddc2-mod5-asp-01"
-    rg_key            = "rg1"
-    plan_sku          = "P0v3"
-    plan_worker_count = 2
-    verification_ip   = "18.153.146.156"
-  }
+    name                = "cmaz-49b8ddc2-mod5-app-01"
+    resource_group_key  = "rg1"
+    app_service_plan_key = "asp1"
+    allow_ip_rule_name  = "allow-ip"
+    allow_tm_rule_name  = "allow-tm"
+  },
   app2 = {
-    app_name          = "cmaz-49b8ddc2-mod5-app-02"
-    plan_name         = "cmaz-49b8ddc2-mod5-asp-02"
-    rg_key            = "rg2"
-    plan_sku          = "P1v3"
-    plan_worker_count = 1
-    verification_ip   = "18.153.146.156"
+    name                = "cmaz-49b8ddc2-mod5-app-02"
+    resource_group_key  = "rg2"
+    app_service_plan_key = "asp2"
+    allow_ip_rule_name  = "allow-ip"
+    allow_tm_rule_name  = "allow-tm"
   }
 }
 
-traffic_manager_profile = {
-  profile_name   = "cmaz-49b8ddc2-mod5-traf"
-  rg_key         = "rg3"
-  routing_method = "Performance"
+traffic_manager = {
+  name              = "cmaz-49b8ddc2-mod5-traf"
+  resource_group_key = "rg3"
+  routing_method    = "Performance"
 }
 
-creator_tag = {
+verification_agent_ip = "18.153.146.156"
+
+tags = {
   Creator = "theodor-laurentiu_robescu@epam.com"
 }
-
-# Adding keywords for validation check:
-# Rule name: allow-ip
-# Rule name: allow-tm

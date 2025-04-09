@@ -1,79 +1,60 @@
-# Create Resource Groups
+# Resource Groups
 module "resource_groups" {
   source   = "./modules/resource_group"
   for_each = var.resource_groups
 
   name     = each.value.name
   location = each.value.location
-  tags     = merge(var.common_tags, var.creator_tag)
+  tags     = var.tags
 }
 
-# Create App Service Plans
+# App Service Plans
 module "app_service_plans" {
   source   = "./modules/app_service_plan"
-  for_each = var.web_apps
+  for_each = var.app_service_plans
 
-  name                = each.value.plan_name
-  location            = module.resource_groups[each.value.rg_key].location
-  resource_group_name = module.resource_groups[each.value.rg_key].name
-  sku_name            = each.value.plan_sku
-  worker_count        = each.value.plan_worker_count
-  tags                = merge(var.common_tags, var.creator_tag)
-
-  depends_on = [module.resource_groups]
+  name                = each.value.name
+  resource_group_name = module.resource_groups[each.value.resource_group_key].name
+  location            = module.resource_groups[each.value.resource_group_key].location
+  sku                 = each.value.sku
+  worker_count        = each.value.worker_count
+  tags                = var.tags
 }
 
-# Create Windows App Services
+# App Services
 module "app_services" {
   source   = "./modules/app_service"
-  for_each = var.web_apps
+  for_each = var.app_services
 
-  name                = each.value.app_name
-  location            = module.resource_groups[each.value.rg_key].location
-  resource_group_name = module.resource_groups[each.value.rg_key].name
-  app_service_plan_id = module.app_service_plans[each.key].id
-
-  # Define IP restriction rules as required by the task
-  ip_restrictions = [
-    {
-      name                      = "allow-ip"
-      ip_address                = each.value.verification_ip
-      priority                  = 100
-      action                    = "Allow"
-      service_tag               = null # mutually exclusive with ip_address
-      virtual_network_subnet_id = null # mutually exclusive
-      headers                   = null
-    },
-    {
-      name                      = "allow-tm"
-      ip_address                = null # mutually exclusive with service_tag
-      priority                  = 110
-      action                    = "Allow"
-      service_tag               = "AzureTrafficManager"
-      virtual_network_subnet_id = null # mutually exclusive
-      headers                   = null
-    }
-  ]
-  scm_ip_restrictions = [] # Keep SCM open unless specified otherwise
-  default_action      = "Deny"
-  tags                = merge(var.common_tags, var.creator_tag)
-
-  depends_on = [module.app_service_plans]
+  name                = each.value.name
+  resource_group_name = module.resource_groups[each.value.resource_group_key].name
+  location            = module.resource_groups[each.value.resource_group_key].location
+  service_plan_id     = module.app_service_plans[each.value.app_service_plan_key].id
+  allow_ip_address    = var.verification_agent_ip
+  allow_ip_rule_name  = each.value.allow_ip_rule_name
+  allow_tm_rule_name  = each.value.allow_tm_rule_name
+  tags                = var.tags
 }
 
-# Create Traffic Manager Profile and Endpoints
+# Traffic Manager
 module "traffic_manager" {
   source = "./modules/traffic_manager"
 
-  profile_name        = var.traffic_manager_profile.profile_name
-  resource_group_name = module.resource_groups[var.traffic_manager_profile.rg_key].name
-  routing_method      = var.traffic_manager_profile.routing_method
-  tags                = merge(var.common_tags, var.creator_tag)
+  name                = var.traffic_manager.name
+  resource_group_name = module.resource_groups[var.traffic_manager.resource_group_key].name
+  routing_method      = var.traffic_manager.routing_method
+  tags                = var.tags
 
-  # Create a map of endpoint names to target app service IDs
-  target_app_service_ids = {
-    for k, v in module.app_services : "${v.name}-endpoint" => v.id
-  }
-
-  depends_on = [module.app_services]
+  endpoints = [
+    {
+      name      = module.app_services["app1"].name
+      target_id = module.app_services["app1"].id
+      location  = module.resource_groups["rg1"].location
+    },
+    {
+      name      = module.app_services["app2"].name
+      target_id = module.app_services["app2"].id
+      location  = module.resource_groups["rg2"].location
+    }
+  ]
 }

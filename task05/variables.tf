@@ -1,45 +1,47 @@
 variable "resource_groups" {
-  description = "A map of resource groups to create."
+  description = "Resource groups configuration"
   type = map(object({
     name     = string
     location = string
   }))
-  default = {}
 }
 
-variable "web_apps" {
-  description = "A map of web apps and their associated service plans to create."
+variable "app_service_plans" {
+  description = "App Service Plans configuration"
   type = map(object({
-    app_name          = string
-    plan_name         = string
-    rg_key            = string # Key referencing the resource_groups map
-    plan_sku          = string
-    plan_worker_count = number
-    verification_ip   = string
+    name          = string
+    sku           = string
+    worker_count  = number
+    resource_group_key = string
   }))
-  default = {}
 }
 
-variable "traffic_manager_profile" {
-  description = "Configuration for the Traffic Manager profile."
+variable "app_services" {
+  description = "App Services configuration"
+  type = map(object({
+    name                = string
+    resource_group_key  = string
+    app_service_plan_key = string
+    allow_ip_rule_name  = string
+    allow_tm_rule_name  = string
+  }))
+}
+
+variable "traffic_manager" {
+  description = "Traffic Manager configuration"
   type = object({
-    profile_name   = string
-    rg_key         = string # Key referencing the resource_groups map
-    routing_method = string
+    name              = string
+    resource_group_key = string
+    routing_method    = string
   })
-  default = null # Make it non-optional
 }
 
-variable "common_tags" {
-  description = "Common tags to apply to all resources."
-  type        = map(string)
-  default = {
-    ManagedBy = "Terraform"
-  }
+variable "verification_agent_ip" {
+  description = "Verification agent IP address"
+  type        = string
 }
 
-variable "creator_tag" {
-  description = "Tag identifying the creator."
+variable "tags" {
+  description = "Tags for resources"
   type        = map(string)
-  default     = {}
 }
