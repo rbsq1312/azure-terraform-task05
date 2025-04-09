@@ -17,11 +17,11 @@ variable "routing_method" {
 variable "endpoints" {
   description = "The endpoints for the Traffic Manager profile"
   type = list(object({
-    name       = string
-    target_id  = string
-    weight     = optional(number)
-    priority   = optional(number)
-    location   = string
+    name      = string
+    target_id = string
+    weight    = optional(number)
+    priority  = optional(number)
+    location  = string
   }))
 }
 
