@@ -26,5 +26,5 @@ resource "azurerm_traffic_manager_azure_endpoint" "endpoints" {
   target_resource_id = var.endpoints[count.index].target_id
   weight             = var.endpoints[count.index].weight != null ? var.endpoints[count.index].weight : 100
   priority           = var.endpoints[count.index].priority != null ? var.endpoints[count.index].priority : 1
-  location           = var.endpoints[count.index].location # Changed from endpoint_location to location
+  # The location line should be removed entirely
 }
