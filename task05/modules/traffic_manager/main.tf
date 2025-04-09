@@ -20,11 +20,11 @@ resource "azurerm_traffic_manager_profile" "tm" {
 }
 
 resource "azurerm_traffic_manager_azure_endpoint" "endpoints" {
-  count               = length(var.endpoints)
-  name                = var.endpoints[count.index].name
-  profile_id          = azurerm_traffic_manager_profile.tm.id
-  target_resource_id  = var.endpoints[count.index].target_id
-  weight              = var.endpoints[count.index].weight != null ? var.endpoints[count.index].weight : 100
-  priority            = var.endpoints[count.index].priority != null ? var.endpoints[count.index].priority : 1
-  location            = var.endpoints[count.index].location  # Changed from endpoint_location to location
+  count              = length(var.endpoints)
+  name               = var.endpoints[count.index].name
+  profile_id         = azurerm_traffic_manager_profile.tm.id
+  target_resource_id = var.endpoints[count.index].target_id
+  weight             = var.endpoints[count.index].weight != null ? var.endpoints[count.index].weight : 100
+  priority           = var.endpoints[count.index].priority != null ? var.endpoints[count.index].priority : 1
+  location           = var.endpoints[count.index].location # Changed from endpoint_location to location
 }
